@@ -1,0 +1,8 @@
+numpy
+pandas
+rasa
+tkinter
+pyttsx3
+asyncio
+gensim
+underthesea
