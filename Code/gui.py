@@ -2,7 +2,8 @@ from tkinter import *
 import tkinter as tk
 from tkinter import font as tkFont 
 import time
-import pyttsx3
+from gtts import gTTS
+from playsound import playsound
 import tkinter.messagebox
 from w2v_chatbot import W2VChatBot
 from rasa_chatbot import Rasa_Bot
@@ -35,7 +36,6 @@ class ChatInterface(Frame):
         # Import Model
         self.is_w2v = True
         self.is_normal_persona = True
-
 
         # Init bots
         self.w2v_bot = W2VChatBot()
@@ -165,18 +165,23 @@ class ChatInterface(Frame):
         self.default_format()
 
     def playResponce(self, responce):
-        x = pyttsx3.init()
-        voices = x.getProperty('voices')
         print(responce)
-        x.setProperty('voice', voices[1].id)
-        x.setProperty('rate', 190)
-        # x.setProperty('volume', 100)
-        x.say(responce)
-        x.runAndWait()
-        print("Played Successfully......")
+        try:
+            # Create the audio file
+            tts = gTTS(text=responce, lang='vi')
+            filename = "responce_audio.mp3"
+            tts.save(filename)
+
+            # Play the audio file
+            playsound(filename)
+            print("Played Successfully......")
+            # Delete the audio file
+            os.remove(filename)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def last_sent_label(self, date):
-
         try:
             self.sent_label.destroy()
         except AttributeError:
