@@ -7,11 +7,10 @@ import tkinter.messagebox
 from w2v_chatbot import W2VChatBot
 from rasa_chatbot import Rasa_Bot
 import threading
-import pandas as pd
 import os
 os.chdir('../Dataset/')
-saved_username = ["KKWBOT"]
-ans=["KKWBOT"]
+# saved_username = ["KKWBOT"]
+# ans=["KKWBOT"]
 window_size = "500x500"
 
 
@@ -21,7 +20,7 @@ class ChatInterface(Frame):
         Frame.__init__(self, master)
         self.master = master
 
-        self.bot_name = 'AI Girlfriend'
+        self.bot_name = 'PHAKEBOT'
         #Read Data
 
         # Defaut data/model path
@@ -73,10 +72,11 @@ class ChatInterface(Frame):
 
 
         #personarity 
+        self.personality_var = tk.StringVar(value="Normal")  # Default personality
         personality = Menu(options, tearoff=0)
         options.add_cascade(label="Personality", menu=personality)
-        personality.add_command(label='Normal', command=self.personality_change_normal)
-        personality.add_command(label='Tsundere', command=self.personality_change_tsun)
+        personality.add_radiobutton(label='Normal', variable=self.personality_var, value='Normal', command=self.personality_change_normal)
+        personality.add_radiobutton(label='Tsundere', variable=self.personality_var, value='Tsundere', command=self.personality_change_tsun)
 
         # features
         features = Menu(options, tearoff=0)
@@ -84,33 +84,36 @@ class ChatInterface(Frame):
         features.add_command(label="Change bot name", command=self.name_change)
 
         # models
+        self.model_var = tk.StringVar(value="W2V")  # Default model
         model = Menu(options, tearoff=0)
         options.add_cascade(label="Model", menu=model)
-        model.add_command(label="W2V", command=lambda: self.model_change(True))
-        model.add_command(label="RASA", command=lambda: self.model_change(False))
+        model.add_radiobutton(label="W2V", variable=self.model_var, value="W2V", command=lambda: self.model_change(True))
+        model.add_radiobutton(label="RASA", variable=self.model_var, value="RASA", command=lambda: self.model_change(False))
 
         # font
+        self.font_var = tk.StringVar(value="Default")  # Default font
         font = Menu(options, tearoff=0)
         options.add_cascade(label="Font", menu=font)
-        font.add_command(label="Default", command=self.font_change_default)
-        font.add_command(label="Times", command=self.font_change_times)
-        font.add_command(label="System", command=self.font_change_system)
-        font.add_command(label="Helvetica", command=self.font_change_helvetica)
-        font.add_command(label="Fixedsys", command=self.font_change_fixedsys)
+        font.add_radiobutton(label="Default", variable=self.font_var, value="Default", command=self.font_change_default)
+        font.add_radiobutton(label="Times", variable=self.font_var, value="Times", command=self.font_change_times)
+        font.add_radiobutton(label="System", variable=self.font_var, value="System", command=self.font_change_system)
+        font.add_radiobutton(label="Helvetica", variable=self.font_var, value="Helvetica", command=self.font_change_helvetica)
+        font.add_radiobutton(label="Fixedsys", variable=self.font_var, value="Fixedsys", command=self.font_change_fixedsys)
 
         # color theme
+        self.color_theme_var = tk.StringVar(value="Default")  # Default color theme
         color_theme = Menu(options, tearoff=0)
         options.add_cascade(label="Color Theme", menu=color_theme)
-        color_theme.add_command(label="Default", command=self.color_theme_default)
-        color_theme.add_command(label="Grey", command=self.color_theme_grey)
-        color_theme.add_command(label="Blue", command=self.color_theme_dark_blue)
-        color_theme.add_command(label="Torque", command=self.color_theme_turquoise)
-        color_theme.add_command(label="Hacker", command=self.color_theme_hacker)
+        color_theme.add_radiobutton(label="Default", variable=self.color_theme_var, value="Default", command=self.color_theme_default)
+        color_theme.add_radiobutton(label="Grey", variable=self.color_theme_var, value="Grey", command=self.color_theme_grey)
+        color_theme.add_radiobutton(label="Blue", variable=self.color_theme_var, value="Blue", command=self.color_theme_dark_blue)
+        color_theme.add_radiobutton(label="Torque", variable=self.color_theme_var, value="Torque", command=self.color_theme_turquoise)
+        color_theme.add_radiobutton(label="Hacker", variable=self.color_theme_var, value="Hacker", command=self.color_theme_hacker)
 
         help_option = Menu(menu, tearoff=0)
         menu.add_cascade(label="Help", menu=help_option)
-        help_option.add_command(label="About KKWBOT", command=self.msg)
-        help_option.add_command(label="Develpoers", command=self.about)
+        help_option.add_command(label="About AI Girlfriend Chatbot", command=self.msg)
+        help_option.add_command(label="Developers", command=self.about)
 
         self.text_frame = Frame(self.master, bd=6)
         self.text_frame.pack(expand=True, fill=BOTH)
@@ -125,6 +128,9 @@ class ChatInterface(Frame):
                              width=10, height=1)
         self.text_box.pack(expand=True, fill=BOTH)
         self.text_box_scrollbar.config(command=self.text_box.yview)
+        self.text_box.tag_configure('center', justify=CENTER)
+        self.text_box.tag_configure("human_style", font=("Helvetica", 12, "bold"), foreground="dodger blue")
+        self.text_box.tag_configure("bot_style", font=("Helvetica", 12, "bold"), foreground="deep pink")
 
         # frame containing user entry field
         self.entry_frame = Frame(self.master, bd=1)
@@ -149,7 +155,7 @@ class ChatInterface(Frame):
 
         # Intro
         self.text_box.configure(state=NORMAL)
-        self.text_box.insert(END, " <--------- Chào mừng đến với bạn giái ảo phake -------->\n")
+        self.text_box.insert(END, "< Chào mừng đến với bạn gái ảo PHAKEBOT >\n", 'center')
         self.text_box.configure(state=DISABLED)
         self.text_box.see(END)
 
@@ -190,16 +196,18 @@ class ChatInterface(Frame):
         exit()
 
     def msg(self):
-        tkinter.messagebox.showinfo("KKWBOT v1.0",
-                                    'KKWBOT is a chatbot for answering question regranding to KKWagh college,Nashik\nIt is based on retrival-based NLP using pythons NLTK tool-kit module\nGUI is based on Tkinter')
+        tkinter.messagebox.showinfo("PHAKEBOT v1.0",
+                                    'PHAKEBOT is a girlfriend chatbot for answering questions and communication\nIt is based on retrival-based NLP using Rasa framework, word2vex, underthesea libary\nGUI is based on Tkinter')
 
     def about(self):
-        tkinter.messagebox.showinfo("AI GirlFriend Phake Developers","Nguyễn Đức Nhật \n Vũ Văn Chí")
+        tkinter.messagebox.showinfo("AI GirlFriend PHAKEBOT Developers","Students in HUS, VNU \nNguyễn Đức Nhật - 21001573 \nNguyễn Minh Trí - 21000401")
 
     def send_message_insert(self, message):
         user_input = self.entry_field.get()
-        pr1 = "Human : " + user_input + "\n"
+        human = "Human "
+        pr1 = f': {user_input}\n'
         self.text_box.configure(state=NORMAL)
+        self.text_box.insert(END, human, "human_style")
         self.text_box.insert(END, pr1)
         self.text_box.configure(state=DISABLED)
         self.text_box.see(END)
@@ -221,8 +229,11 @@ class ChatInterface(Frame):
         
 
         # Show chat messages
-        pr = f'{self.bot_name} : {answer}\n'
+        entity = self.bot_name
+        pr = f' : {answer}\n'
+
         self.text_box.configure(state=NORMAL)
+        self.text_box.insert(END, entity, "bot_style")
         self.text_box.insert(END, pr)
         self.text_box.configure(state=DISABLED)
         self.text_box.see(END)
@@ -318,7 +329,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#212121", fg="#FFFFFF", insertbackground="#FFFFFF")
         self.send_button_frame.config(bg="#2a2b2d")
         self.send_button.config(bg="#212121", fg="#FFFFFF", activebackground="#212121", activeforeground="#FFFFFF")
-        self.emoji_button.config(bg="#212121", fg="#FFFFFF", activebackground="#212121", activeforeground="#FFFFFF")
+        # self.emoji_button.config(bg="#212121", fg="#FFFFFF", activebackground="#212121", activeforeground="#FFFFFF")
         self.sent_label.config(bg="#2a2b2d", fg="#FFFFFF")
 
         self.tl_bg = "#212121"
@@ -334,7 +345,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#4f4f4f", fg="#ffffff", insertbackground="#ffffff")
         self.send_button_frame.config(bg="#444444")
         self.send_button.config(bg="#4f4f4f", fg="#ffffff", activebackground="#4f4f4f", activeforeground="#ffffff")
-        self.emoji_button.config(bg="#4f4f4f", fg="#ffffff", activebackground="#4f4f4f", activeforeground="#ffffff")
+        # self.emoji_button.config(bg="#4f4f4f", fg="#ffffff", activebackground="#4f4f4f", activeforeground="#ffffff")
         self.sent_label.config(bg="brown", fg="#ffffff")
 
         self.tl_bg = "#4f4f4f"
@@ -349,7 +360,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#669999", fg="#FFFFFF", insertbackground="#FFFFFF")
         self.send_button_frame.config(bg="#003333")
         self.send_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
-        self.emoji_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
+        # self.emoji_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
         self.sent_label.config(bg="#003333", fg="#FFFFFF")
 
         self.tl_bg = "#669999"
@@ -366,7 +377,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#1c2e44", fg="#FFFFFF", insertbackground="#FFFFFF")
         self.send_button_frame.config(bg="#263b54")
         self.send_button.config(bg="#1c2e44", fg="#FFFFFF", activebackground="#1c2e44", activeforeground="#FFFFFF")
-        self.emoji_button.config(bg="#1c2e44", fg="#FFFFFF", activebackground="#1c2e44", activeforeground="#FFFFFF")
+        # self.emoji_button.config(bg="#1c2e44", fg="#FFFFFF", activebackground="#1c2e44", activeforeground="#FFFFFF")
         self.sent_label.config(bg="#263b54", fg="#FFFFFF")
 
         self.tl_bg = "#1c2e44"
@@ -382,7 +393,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#669999", fg="#FFFFFF", insertbackground="#FFFFFF")
         self.send_button_frame.config(bg="#003333")
         self.send_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
-        self.emoji_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
+        # self.emoji_button.config(bg="#669999", fg="#FFFFFF", activebackground="#669999", activeforeground="#FFFFFF")
         self.sent_label.config(bg="#003333", fg="#FFFFFF")
 
         self.tl_bg = "#669999"
@@ -398,7 +409,7 @@ class ChatInterface(Frame):
         self.entry_field.config(bg="#0F0F0F", fg="#33FF33", insertbackground="#33FF33")
         self.send_button_frame.config(bg="#0F0F0F")
         self.send_button.config(bg="green", fg="#FFFFFF", activebackground="#0F0F0F", activeforeground="#FFFFFF")
-        self.emoji_button.config(bg="#0F0F0F", fg="#FFFFFF", activebackground="#0F0F0F", activeforeground="#FFFFFF")
+        # self.emoji_button.config(bg="#0F0F0F", fg="#FFFFFF", activebackground="#0F0F0F", activeforeground="#FFFFFF")
         self.sent_label.config(bg="#0F0F0F", fg="#33FF33")
         self.tl_bg = "#0F0F0F"
         self.tl_bg2 = "#0F0F0F"
@@ -413,6 +424,6 @@ if __name__ == "__main__":
     root = Tk()
     a = ChatInterface(root)
     root.geometry(window_size)
-    root.title("AI Girlfriend Phake")
+    root.title("AI Girlfriend Chatbot: PHAKEBOT")
     root.iconbitmap('chatbot.ico')
     root.mainloop()

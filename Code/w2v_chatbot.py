@@ -37,7 +37,7 @@ class W2VChatBot:
             data = pd.read_excel(data_path, dtype=str)
             self.answers = data['answer'].values   
         self.size = len(self.answers)
-        print(self.answers[:5])
+        # print(self.answers[:5])
 
     def response(self, input):
         # input_embedding = self.doc_embedding(input)

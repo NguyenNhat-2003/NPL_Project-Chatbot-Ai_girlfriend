@@ -1,6 +1,8 @@
 import asyncio
 from rasa.core.agent import Agent
 import os
+import warnings
+warnings.filterwarnings("ignore")
 os.chdir('../Dataset/')
 
 class Rasa_Bot():
