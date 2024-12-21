@@ -6,6 +6,8 @@ os.chdir('../Dataset/')
 class Rasa_Bot():
 
     def __init__(self, model_path='bot_1.tar.gz'):
+        if not os.path.exists(model_path) or not os.path.isfile(model_path):
+            print('Rasa: model not found')
         self.model_path = model_path
         self.agent = Agent.load(model_path)
         print('Rasa: Load model successfully')

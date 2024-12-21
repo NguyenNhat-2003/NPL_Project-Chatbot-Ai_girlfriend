@@ -6,7 +6,6 @@ import string
 from string import punctuation
 from sklearn.metrics.pairwise import cosine_similarity
 import json
-import random
 import os 
 os.chdir('../Dataset/') # data path
 
@@ -24,7 +23,7 @@ class W2VChatBot:
           return False
         self.model  = gensim.models.KeyedVectors.load_word2vec_format(model_path, binary=True)
         self.tokenizer = word_tokenize
-        print('Set models: W2V')
+        print('W2V: Load model successfully')
         return True
 
     def load_answer(self, data_path='normal_gf_excel.xlsx'):
@@ -52,8 +51,8 @@ class W2VChatBot:
         if (max_score <= 0.5):
             return -1, 'Em không biết trả lời như thế nào', max_score
         
-        # return most_similar_idx, self.answers[most_similar_idx], max_score
-        return self.answers[most_similar_idx]
+        return most_similar_idx, self.answers[most_similar_idx], max_score
+        # return self.answers[most_similar_idx]
     
     #  ----------  Word2Vex ------------
     def tokenize(self, text, stop_w=['vậy', 'khi', 'có thể', 'nào', 'sẽ', 'gì', 'có', 'rồi']):
@@ -134,11 +133,12 @@ class W2VChatBot:
     
 if __name__ == '__main__':
     bot = W2VChatBot()
+    model_path = 'baomoi.model.bin'
     data_path = 'Tsundere_bot.json'
     bot.load_model()
     bot.load_answer(data_path)
-    bot.load_dataset(data_path, file_name='tsun_bot')
-    # bot.load_data_from_npy(npy_path='tsun_bot.npy')
+    # bot.load_dataset(data_path, file_name='w2v_tsun_bot')
+    bot.load_data_from_npy(npy_path='w2v_tsun_bot.npy')
 
     print(bot.response('Em là ai?'))
     # print(bot.response('Mày ngu quá'))

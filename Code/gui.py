@@ -26,15 +26,16 @@ class ChatInterface(Frame):
 
         # Defaut data/model path
         self.w2v_model_path = 'baomoi.model.bin'
-        self.rasa_model_normal = 'bot_1.tar.gz'
+        self.rasa_model_normal_path = 'Normal_bot_model.gz'
         self.rasa_model_tsun_path = 'Tsun_bot_model.gz'
-        self.w2v_answer_normal_path = 'json_normal_bot.json'
+        self.w2v_answer_normal_path = 'Normal_bot.json'
         self.w2v_answer_tsun_path = 'Tsundere_bot.json'
-        self.w2v_npy_normal_path = 'dataset_vectors.npy'
-        self.w2v_npy_tsun_path = 'tsun_bot.npy'
+        self.w2v_npy_normal_path = 'w2v_normal_bot.npy'
+        self.w2v_npy_tsun_path = 'w2v_tsun_bot.npy'
 
         # Import Model
         self.is_w2v = True
+        self.is_normal_persona = True
 
 
         # Init bots
@@ -42,7 +43,9 @@ class ChatInterface(Frame):
         self.w2v_bot.load_model()
         self.w2v_bot.load_answer(self.w2v_answer_normal_path)
         self.w2v_bot.load_data_from_npy(self.w2v_npy_normal_path)
-        # self.rasa_bot = Rasa_Bot()
+
+        self.rasa_bot_normal = Rasa_Bot(self.rasa_model_normal_path)
+        self.rasa_bot_tsun = Rasa_Bot(self.rasa_model_tsun_path)
 
         # sets default bg for top level windows
         self.tl_bg = "#EEEEEE"
@@ -209,9 +212,13 @@ class ChatInterface(Frame):
         # answer = self.bot.response(user_input) # Run
 
         if self.is_w2v:
-            answer = self.w2v_bot.response(user_input)
+            answer = self.w2v_bot.response(user_input)[1]
         else:
-            answer = self.rasa_bot.response(user_input)
+            if self.is_normal_persona:
+                answer = self.rasa_bot_normal.response(user_input)
+            else:
+                answer = self.rasa_bot_tsun.response(user_input)
+        
 
         # Show chat messages
         pr = f'{self.bot_name} : {answer}\n'
@@ -236,19 +243,19 @@ class ChatInterface(Frame):
     
     # ------  Personality selection ------
     def personality_change_tsun(self):
-        # if self.is_w2v:
+        if self.is_w2v:
             self.w2v_bot.load_answer(self.w2v_answer_tsun_path)
             self.w2v_bot.load_data_from_npy(self.w2v_npy_tsun_path)
-        # else:
-            self.rasa_bot = Rasa_Bot(self.rasa_model_tsun_path)
-            tkinter.messagebox.showinfo("Personality","Changed to Tsundere Girlfriend")
+
+        # Update personality state
+        self.is_normal_persona = False
+        tkinter.messagebox.showinfo("Personality","Changed to Tsundere Girlfriend")
     
     def personality_change_normal(self):
         if self.is_w2v:
             self.w2v_bot.load_answer(self.w2v_answer_normal_path)
             self.w2v_bot.load_data_from_npy(self.w2v_npy_normal_path)
-        else:
-            self.rasa_bot = Rasa_Bot(self.rasa_model_normal_path)
+        self.is_normal_persona = True
         tkinter.messagebox.showinfo("Personality","Changed to Normal Girlfriend")
         
     
@@ -404,7 +411,6 @@ class ChatInterface(Frame):
 
 if __name__ == "__main__":
     root = Tk()
-
     a = ChatInterface(root)
     root.geometry(window_size)
     root.title("AI Girlfriend Phake")
