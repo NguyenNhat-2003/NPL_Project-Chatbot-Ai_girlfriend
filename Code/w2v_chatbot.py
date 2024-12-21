@@ -40,7 +40,6 @@ class W2VChatBot:
         # print(self.answers[:5])
 
     def response(self, input):
-        # input_embedding = self.doc_embedding(input)
         input_embedding = self.w2v_embedding(input)
         
         # Compute cosine similarity between input sentence and each sentence in the list
@@ -49,7 +48,7 @@ class W2VChatBot:
         max_score = similarities[most_similar_idx]
 
         if (max_score <= 0.5):
-            return -1, 'Em không biết trả lời như thế nào', max_score
+            return -1, 'Em không hiểu ý anh', max_score
         
         return most_similar_idx, self.answers[most_similar_idx], max_score
         # return self.answers[most_similar_idx]
