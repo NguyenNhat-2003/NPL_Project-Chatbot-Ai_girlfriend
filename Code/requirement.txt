@@ -5,4 +5,5 @@ tkinter
 pyttsx3
 asyncio
 gensim
+sklearn
 underthesea
