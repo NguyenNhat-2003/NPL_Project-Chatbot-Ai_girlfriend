@@ -2,8 +2,9 @@ numpy
 pandas
 rasa
 tkinter
-pyttsx3
 asyncio
 gensim
 sklearn
 underthesea
+playsound==1.2.2
+gTTS
