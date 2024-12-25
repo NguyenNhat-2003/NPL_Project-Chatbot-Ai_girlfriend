@@ -1,10 +1,10 @@
 numpy
 pandas
 rasa
-tkinter
+tk
 asyncio
 gensim
-sklearn
+scikit-learn
 underthesea
 playsound==1.2.2
 gTTS
